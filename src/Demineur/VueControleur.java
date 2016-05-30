@@ -1,3 +1,5 @@
+package Demineur;
+
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -24,7 +26,7 @@ public class VueControleur extends Application{
         
         Label labelmine = new Label("Nombre de mines restantes : ");
         Label nbmines = new Label("0");
-        Label labeltemps = new Label("Temps écoulé : ");
+        Label labeltemps = new Label("Temps ï¿½coulï¿½ : ");
         Label nbtemps = new Label("0");
         gridpane.add(labelmine,0,0);
         gridpane.add(nbmines,1,0);
