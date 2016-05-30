@@ -5,9 +5,8 @@ public class ModeleDemineur {
     public static void main(String[] args) {
         int l=10;
         int c=10;
-        int m=100;
+        int m=90;
         GrilleModele p = new GrilleModele(l,c,m);
-        p.placerMines(55);
         p.jouer(55);
         aff(p);
     }

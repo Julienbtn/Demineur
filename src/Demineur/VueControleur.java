@@ -22,8 +22,7 @@ public class VueControleur extends Application{
     private GrilleModele jeu;
     
     public void start(Stage primaryStage) {
-        jeu=new GrilleModele(10, 10, 90);
-        jeu.placerMines(0);
+        jeu=new GrilleModele(10, 10, 10);
         
         BorderPane border = new BorderPane();
         
