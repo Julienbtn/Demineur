@@ -1,25 +1,31 @@
 package Demineur;
 
+import java.util.Observable;
+import java.util.Observer;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import modeledemineur.GrilleModele;
 
 public class VueControleur extends Application{
     
-    //Modele m;
+    // Une fois que la case est cliquée
+    // b.setDisable(true);
+    
+    private GrilleModele jeu;
     
     public void start(Stage primaryStage) {
-        
-        //m = new Model();
+        jeu=new GrilleModele(10, 10, 90);
+        jeu.placerMines(0);
         
         BorderPane border = new BorderPane();
-        
-        GridPane gPane = new GridPane();
         
         Group score = new Group();
         GridPane gridpane = new GridPane();
@@ -37,14 +43,41 @@ public class VueControleur extends Application{
         
         Group milieu = new Group();
         GridPane plateau = new GridPane();
-        Button b;
+        
         for (int i =0; i<10;i++){
             for(int j=0; j<10; j++){
-                b=new Button();
-                b.setMinSize(40, 40);
+                final int id = i*jeu.getLignes()+j;
+                Button b= new Button();
+                b.setPrefHeight(40);
+                b.setPrefWidth(40);
+                b.setOnMouseClicked(new EventHandler<MouseEvent>(){
+                    @Override
+                    public void handle(MouseEvent event){
+                        jeu.jouer(id);
+                    }
+                });
+                jeu.addObserver(new Observer(){
+                    @Override
+                    public void update(Observable o,Object arg){
+                        if(jeu.isGagne()||jeu.isPerdu())
+                            b.setDisable(true);
+                        
+                        if(jeu.getCase(id).isVisible()){
+                            b.setDisable(true);
+                            b.setText(""+jeu.getCase(id).getValeur());
+                        }
+                        else if(jeu.getCase(id).isDrapeau()){
+                            b.setText("/!\\");
+                        }
+                        else{
+                            b.setText("");
+                        }
+                    }
+                });
                 plateau.add(b, i, j);
             } 
         }
+        
         milieu.getChildren().add(plateau);
         border.setCenter(milieu);
         
@@ -54,10 +87,8 @@ public class VueControleur extends Application{
         primaryStage.setHeight(500);
         primaryStage.setWidth(500);
         primaryStage.show();
-        
     }
-        
-    
+            
     public static void main(String[] args) {
         launch();
     }
