@@ -52,6 +52,12 @@ public class GrilleModele extends Observable {
         }
     }
     
+    public void modifDrapeau(int id){
+        plateau[id].modifDrapeau();
+        setChanged();
+        notifyObservers();
+    }
+    
     public void jouer(int id){
         if(premierClic){
             placerMines(id);
