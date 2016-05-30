@@ -26,7 +26,7 @@ public class VueControleur extends Application{
         
         Label labelmine = new Label("Nombre de mines restantes : ");
         Label nbmines = new Label("0");
-        Label labeltemps = new Label("Temps �coul� : ");
+        Label labeltemps = new Label("Temps écoulé : ");
         Label nbtemps = new Label("0");
         gridpane.add(labelmine,0,0);
         gridpane.add(nbmines,1,0);
@@ -62,5 +62,5 @@ public class VueControleur extends Application{
         launch();
     }
         
-    }
+}
     
