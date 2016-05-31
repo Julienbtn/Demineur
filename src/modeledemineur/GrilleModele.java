@@ -108,7 +108,7 @@ public class GrilleModele extends Observable {
             fin =-1;
         else{
             int i=0;
-            while((plateau[i].isVisible()||plateau[i].isMine())&&i<lignes*colonnes)
+            while(i<lignes*colonnes&&(plateau[i].isVisible()||plateau[i].isMine()))
                 i++;
             if(i==lignes*colonnes)
                 fin=1;
