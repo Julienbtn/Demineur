@@ -1,5 +1,6 @@
 package Demineur;
 
+import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.application.Application;
@@ -8,7 +9,8 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyCode;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -23,6 +25,7 @@ public class VueControleur extends Application{
     
     private GrilleModele jeu;
     
+    @Override
     public void start(Stage primaryStage) {
         jeu=new GrilleModele(10, 10, 10);
         
@@ -58,8 +61,7 @@ public class VueControleur extends Application{
                             jeu.jouer(id);
                         else if(event.getButton().equals(MouseButton.SECONDARY))
                             jeu.modifDrapeau(id);
-                        
-                    }
+                        }
                 });
                 jeu.addObserver(new Observer(){
                     @Override
@@ -68,11 +70,22 @@ public class VueControleur extends Application{
                             b.setDisable(true);
                         
                         if(jeu.getCase(id).isVisible()){
-                            b.setDisable(true);
-                            b.setText(""+jeu.getCase(id).getValeur());
+                            
+                            if (jeu.getCase(id).getValeur()==-1){
+                                String mineURI = new File("image/mine.jpg").toURI().toString();
+                                Image mine = new Image(mineURI);
+                                ImageView mineView = new ImageView(mine);
+                                b.setGraphic(mineView);  
+                              }
+                            else
+                                b.setText(""+jeu.getCase(id).getValeur());
+                            b.setDisable(true);                         
                         }
                         else if(jeu.getCase(id).isDrapeau()){
-                            b.setText("/!\\");
+                            String drapeauURI = new File("image/drapeau.png").toURI().toString();
+                            Image drapeau = new Image(drapeauURI);
+                            ImageView drapeauView = new ImageView(drapeau);
+                            b.setGraphic(drapeauView);
                         }
                         else{
                             b.setText("");
@@ -91,6 +104,7 @@ public class VueControleur extends Application{
         primaryStage.setScene(scene);
         primaryStage.setHeight(500);
         primaryStage.setWidth(500);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
             
