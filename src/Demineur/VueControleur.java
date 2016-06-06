@@ -1,8 +1,7 @@
 package Demineur;
 
 import java.io.File;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -18,7 +17,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import modeledemineur.GrilleModele;
 
