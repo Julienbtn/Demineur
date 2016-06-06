@@ -4,19 +4,12 @@ import java.io.File;
 import java.util.*;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.control.TextField;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.*;
+import javafx.scene.image.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import modeledemineur.GrilleModele;
 
@@ -149,12 +142,21 @@ public class VueControleur extends Application{
             }
             else if (jeu.isPerdu())
             {
-                Alert défaite = new Alert(AlertType.INFORMATION);   
+                Alert défaite = new Alert(AlertType.CONFIRMATION);   
                 défaite.setTitle("Défaite");
                 défaite.setHeaderText(null);
-                défaite.setContentText("Oh non, vous avez perdu ...");
-                défaite.show();
-            }
+                défaite.setHeaderText("Oh non, vous avez perdu ...");
+                défaite.setContentText("Voulez-vous recommencez la partie ? ");
+                //défaite.show();
+                Optional<ButtonType> result = défaite.showAndWait();
+                if (result.get() == ButtonType.OK){
+                    int[] c = new int[3];
+                    c[0]=jeu.getLignes();
+                    c[1]=jeu.getColonnes();
+                    c[2]=jeu.getMines();
+                    init(primaryStage,c);
+                }
+        }
         }
     });
         
