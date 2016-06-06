@@ -3,11 +3,11 @@ package modeledemineur;
 public class ModeleDemineur {
 
     public static void main(String[] args) {
-        int l=10;
+        int l=2;
         int c=10;
-        int m=90;
+        int m=10;
         GrilleModele p = new GrilleModele(l,c,m);
-        p.jouer(55);
+        p.jouer(10);
         aff(p);
     }
     
@@ -27,7 +27,7 @@ public class ModeleDemineur {
                 System.out.print("!");
             else
                 System.out.print(" ");
-            if(i%l==l-1)
+            if(i%c==c-1)
                 System.out.println();
             else
                 System.out.print("|");

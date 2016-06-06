@@ -11,8 +11,7 @@ public class GrilleModele extends Observable {
     int fin;
     //-1 perdu, 1 gagné
     private CaseModele[] plateau;
-    // plateau[lignes * l + c] 
-    
+    // plateau[colonnes * l + c]
     
     public GrilleModele(int nblignes, int nbcolonnes,int nbmines){
         lignes=nblignes;
@@ -40,15 +39,15 @@ public class GrilleModele extends Observable {
     }
     
     public void majValeurs(int id){
-        int colonne = id%lignes;
-        int l=(id-colonne)/lignes-1;
+        int colonne = id%colonnes;
+        int l=(id-colonne)/colonnes-1;
         int c;
         for(int i=0;i<9;i++){
             if(i==3||i==6)
                 l++;
-            c=colonne-1+i%3;
+            c=colonne-1+(i%3);
             if(c>=0&&c<colonnes&&l>=0&&l<lignes&&i!=4)
-                plateau[lignes*l+c].upValeur();
+                plateau[colonnes*l+c].upValeur();
         }
     }
     
@@ -67,15 +66,15 @@ public class GrilleModele extends Observable {
         plateau[id].setVisible();
         if(!plateau[id].isMine()){
             if(nouv && plateau[id].getValeur()==0){
-                int colonne = id%lignes;
-                int l=(id-colonne)/lignes-1;
+                int colonne = id%colonnes;
+                int l=(id-colonne)/colonnes-1;
                 int c;
                 for(int i=0;i<9;i++){
                     if(i==3||i==6)
                         l++;
-                    c=colonne-1+i%3;
+                    c=colonne-1+(i%3);
                     if(c>=0&&c<colonnes&&l>=0&&l<lignes&&i!=4)
-                        jouerRecu(lignes*l+c);
+                        jouerRecu(colonnes*l+c);
                 }
             }
         }
@@ -89,15 +88,15 @@ public class GrilleModele extends Observable {
         plateau[id].setVisible();
         if(!plateau[id].isMine()){
             if(nouv && plateau[id].getValeur()==0){
-                int colonne = id%lignes;
-                int l=(id-colonne)/lignes-1;
+                int colonne = id%colonnes;
+                int l=(id-colonne)/colonnes-1;
                 int c;
                 for(int i=0;i<9;i++){
                     if(i==3||i==6)
                         l++;
-                    c=colonne-1+i%3;
+                    c=colonne-1+(i%3);
                     if(c>=0&&c<colonnes&&l>=0&&l<lignes&&i!=4)
-                        jouerRecu(lignes*l+c);
+                        jouerRecu(colonnes*l+c);
                 }
             }
         }
