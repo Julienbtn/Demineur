@@ -7,6 +7,8 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -16,6 +18,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import modeledemineur.GrilleModele;
 
@@ -108,7 +111,7 @@ public class VueControleur extends Application{
                     public void update(Observable o,Object arg){
                         if(jeu.isGagne()||jeu.isPerdu())
                             b.setDisable(true);
-                        
+
                         if(jeu.getCase(id).isVisible()){
                             
                             if (jeu.getCase(id).getValeur()==-1){
@@ -135,6 +138,27 @@ public class VueControleur extends Application{
                 plateau.add(b, j, i);
             } 
         }
+        jeu.addObserver(new Observer(){
+        @Override
+        public void update(Observable o,Object arg){
+            if(jeu.isGagne())
+            {         
+                Alert victoire = new Alert(AlertType.INFORMATION);   
+                victoire.setTitle("Victoire");
+                victoire.setHeaderText(null);
+                victoire.setContentText("Felicitation vous avez gagné !!!");
+                victoire.show();
+            }
+            else if (jeu.isPerdu())
+            {
+                Alert défaite = new Alert(AlertType.INFORMATION);   
+                défaite.setTitle("Défaite");
+                défaite.setHeaderText(null);
+                défaite.setContentText("Oh non, vous avez perdu ...");
+                défaite.show();
+            }
+        }
+    });
         
         milieu.getChildren().add(plateau);
         border.setCenter(milieu);
