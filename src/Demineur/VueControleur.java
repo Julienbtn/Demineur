@@ -8,6 +8,8 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -22,8 +24,7 @@ public class VueControleur extends Application{
     private GrilleModele jeu;
     
     public void start(Stage primaryStage) {
-        jeu=new GrilleModele(10, 10, 90);
-        jeu.placerMines(0);
+        jeu=new GrilleModele(10, 10, 10);
         
         BorderPane border = new BorderPane();
         
@@ -53,7 +54,11 @@ public class VueControleur extends Application{
                 b.setOnMouseClicked(new EventHandler<MouseEvent>(){
                     @Override
                     public void handle(MouseEvent event){
-                        jeu.jouer(id);
+                        if(event.getButton().equals(MouseButton.PRIMARY))
+                            jeu.jouer(id);
+                        else if(event.getButton().equals(MouseButton.SECONDARY))
+                            jeu.modifDrapeau(id);
+                        
                     }
                 });
                 jeu.addObserver(new Observer(){
