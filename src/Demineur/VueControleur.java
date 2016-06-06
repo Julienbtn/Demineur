@@ -32,6 +32,8 @@ public class VueControleur extends Application{
         BorderPane border = new BorderPane();
         Group score = new Group();
         GridPane gridpane = new GridPane();
+        gridpane.setMinWidth(200);
+        gridpane.setMaxWidth(500);
         
         /*
         Label labelmine = new Label("Nombre de mines restantes : ");
@@ -176,4 +178,3 @@ public class VueControleur extends Application{
         launch();
     }     
 }
-    
