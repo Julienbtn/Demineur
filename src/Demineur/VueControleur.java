@@ -22,6 +22,7 @@ import modeledemineur.GrilleModele;
 public class VueControleur extends Application{
     private GrilleModele jeu;
     
+    @Override
     public void start(Stage primaryStage) {
         init(primaryStage);
     }
@@ -91,8 +92,8 @@ public class VueControleur extends Application{
             for(int j=0; j<jeu.getColonnes(); j++){
                 final int id = i*jeu.getColonnes()+j;
                 Button b= new Button();
-                b.setPrefHeight(40);
-                b.setPrefWidth(40);
+                b.setPrefHeight(400/jeu.getColonnes());
+                b.setPrefWidth(400/jeu.getLignes());
                 b.setOnMouseClicked(new EventHandler<MouseEvent>(){
                     @Override
                     public void handle(MouseEvent event){
@@ -141,8 +142,8 @@ public class VueControleur extends Application{
         Scene scene = new Scene(border);
         primaryStage.setTitle("Demineur");
         primaryStage.setScene(scene);
-        primaryStage.setHeight(500);
-        primaryStage.setWidth(500);
+        primaryStage.setHeight(700);
+        primaryStage.setWidth(600);
         primaryStage.setResizable(false);
         primaryStage.show();
     }
