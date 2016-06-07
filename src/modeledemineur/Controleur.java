@@ -1,19 +1,23 @@
 package modeledemineur;
 
-public class VueControleurConsole {
+public class Controleur {
     private InputConsole in;
     
+    public Controleur(){
+        in = new InputConsole();
+    }
+    
 
-    public static void main(String[] args) {
+    public void start() {
         do{
             GrilleModele jeu = ini();
             int l,c;
             do{
                 aff(jeu);
                 System.out.println("Quel ligne?");
-                l=in.readChose(jeu.getLignes());
+                l=in.readChose(jeu.getLignes())-1;
                 System.out.println("Quel colonne?");
-                c=in.readChose(jeu.getLignes());
+                c=in.readChose(jeu.getColonnes())-1;
                 jeu.jouer(jeu.getColonnes() * l + c);
             }while(!(jeu.isGagne()||jeu.isPerdu()));
             aff(jeu);
@@ -43,7 +47,13 @@ public class VueControleurConsole {
         int l=p.getLignes();
         int c=p.getColonnes();
         CaseModele cm;
+        System.out.print("  ");
+        for(int i=1;i<c;i++)
+            System.out.print(i+(i<10?".":""));
+        System.out.println();
         for(int i=0;i<l*c;i++){
+            if(i%c==0)
+                System.out.print(i/c+1+(i/c+1<10?".":""));
             cm=p.getCase(i);
             if(cm.isVisible()){
                 if(cm.getValeur()==-1)
