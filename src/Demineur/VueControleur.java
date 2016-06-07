@@ -32,8 +32,6 @@ public class VueControleur extends Application{
         BorderPane border = new BorderPane();
         Group score = new Group();
         GridPane gridpane = new GridPane();
-        gridpane.setMinWidth(200);
-        gridpane.setMaxWidth(500);
         
         /*
         Label labelmine = new Label("Nombre de mines restantes : ");
@@ -83,7 +81,6 @@ public class VueControleur extends Application{
         
         Group milieu = new Group();
         GridPane plateau = new GridPane();
-        
         for (int i =0; i<jeu.getLignes();i++){
             for(int j=0; j<jeu.getColonnes(); j++){
                 final int id = i*jeu.getColonnes()+j;
@@ -92,6 +89,7 @@ public class VueControleur extends Application{
                 b.setPrefHeight(400/jeu.getColonnes());
                 b.setPrefWidth(400/jeu.getLignes());
                 
+                Sinon ça? Mais les cases peuvent pas être miniatures => Scroll en bas
                 int taille =min(min(40,400/jeu.getColonnes())400/jeu.getLignes());
                 b.setPrefSize(taille,taille);
                 */
@@ -170,16 +168,27 @@ public class VueControleur extends Application{
         }
         }
     });
-        
         milieu.getChildren().add(plateau);
-        border.setCenter(milieu);
+        //border.setCenter(milieu);
+        int width = jeu.getColonnes()*40+10;
+        int height = jeu.getLignes()*40+30;
+        if(width>780)
+            height+=15;
+        if(height>580)
+            width+=15;
+        Scene scene = new Scene(border,width,height);
         
-        Scene scene = new Scene(border);
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(milieu);
+        border.setCenter(scrollPane);
+        
         primaryStage.setTitle("Demineur");
         primaryStage.setScene(scene);
-        primaryStage.setHeight(700);
-        primaryStage.setWidth(600);
-        primaryStage.setResizable(false);
+        primaryStage.setMinWidth(370);
+        primaryStage.setMinHeight(60);
+        primaryStage.setMaxWidth(800);
+        primaryStage.setMaxHeight(600);
+        primaryStage.centerOnScreen();
         primaryStage.show();
     }
     
