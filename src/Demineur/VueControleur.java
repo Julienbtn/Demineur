@@ -88,12 +88,18 @@ public class VueControleur extends Application{
             for(int j=0; j<jeu.getColonnes(); j++){
                 final int id = i*jeu.getColonnes()+j;
                 Button b= new Button();
+                /* CASES RECTANULAIRES???????
                 b.setPrefHeight(400/jeu.getColonnes());
                 b.setPrefWidth(400/jeu.getLignes());
+                
+                int taille =min(min(40,400/jeu.getColonnes())400/jeu.getLignes());
+                b.setPrefSize(taille,taille);
+                */
+                b.setPrefSize(40,40);
                 b.setOnMouseClicked(new EventHandler<MouseEvent>(){
                     @Override
                     public void handle(MouseEvent event){
-                        if(event.getButton().equals(MouseButton.PRIMARY))
+                        if(event.getButton().equals(MouseButton.PRIMARY)&&!jeu.getCase(id).isDrapeau())
                             jeu.jouer(id);
                         else if(event.getButton().equals(MouseButton.SECONDARY))
                             jeu.modifDrapeau(id);
@@ -106,25 +112,28 @@ public class VueControleur extends Application{
                             b.setDisable(true);
 
                         if(jeu.getCase(id).isVisible()){
-                            
                             if (jeu.getCase(id).getValeur()==-1){
                                 String mineURI = new File("image/mine.jpg").toURI().toString();
                                 Image mine = new Image(mineURI);
                                 ImageView mineView = new ImageView(mine);
-                                b.setGraphic(mineView);  
+                                b.setGraphic(mineView);
+                                b.setText(null);
                               }
                             else
                                 b.setText(""+jeu.getCase(id).getValeur());
                             b.setDisable(true);                         
                         }
                         else if(jeu.getCase(id).isDrapeau()){
+                            /* ON PEUT PAS ENLVER LE DRAPEAU ??????
                             String drapeauURI = new File("image/drapeau.png").toURI().toString();
                             Image drapeau = new Image(drapeauURI);
                             ImageView drapeauView = new ImageView(drapeau);
                             b.setGraphic(drapeauView);
+                            */
+                            b.setText("!");
                         }
                         else{
-                            b.setText("");
+                            b.setText(null);
                         }
                     }
                 });
