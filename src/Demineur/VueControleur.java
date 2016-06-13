@@ -3,6 +3,7 @@ package Demineur;
 import java.io.File;
 import java.util.*;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -27,11 +28,17 @@ public class VueControleur extends Application{
         init(primaryStage,temp);
     }
     
+    public void init(Stage primaryStage,int nbligne, int nbcolonne, int nbmine)
+    {
+        int[] temp = {nbligne, nbcolonne, nbmine};
+        init(primaryStage,temp);
+    }
+    
     public void init(Stage primaryStage, int[] caracs){
         jeu=new GrilleModele(caracs[0], caracs[1], caracs[2]);
         BorderPane border = new BorderPane();
         Group score = new Group();
-        GridPane gridpane = new GridPane();
+        
         
         /*
         Label labelmine = new Label("Nombre de mines restantes : ");
@@ -43,6 +50,21 @@ public class VueControleur extends Application{
         gridpane.add(labeltemps, 2, 0);
         gridpane.add(nbtemps,3,0);
                 */
+        
+        final MenuBar menu =new MenuBar();
+        
+        final Menu difficulte = new Menu("Niveau de difficulté");
+        MenuItem facile=new MenuItem("Facile");
+        facile.setOnAction(actionEvent -> init(primaryStage));
+        final Menu moyen = new Menu("Moyen");
+        moyen.setOnAction(actionEvent -> init(primaryStage,15,15,40));
+        final Menu difficile = new Menu("Difficile");
+        difficile.setOnAction(actionEvent -> init(primaryStage, 20, 20, 120));
+        final Menu personnalise = new Menu("Personnalisé");
+        personnalise.setOnAction(actionEvent -> border.setTop(score));
+        difficulte.getItems().setAll(facile,moyen,difficile,personnalise);
+        
+        GridPane gridpane = new GridPane();
         TextField longueur = new TextField ();
         TextField largeur = new TextField ();
         TextField mines = new TextField ();
@@ -77,7 +99,10 @@ public class VueControleur extends Application{
                 });
         
         score.getChildren().add(gridpane);
-        border.setTop(score);
+        //border.setTop(score);
+        
+        border.setTop(menu);
+        menu.getMenus().setAll(difficulte);
         
         Group milieu = new Group();
         GridPane plateau = new GridPane();
@@ -125,12 +150,10 @@ public class VueControleur extends Application{
                             }
                         }
                         else if(jeu.getCase(id).isDrapeau()){
-                            // ON PEUT PAS ENLVER LE DRAPEAU ??????
                             String drapeauURI = new File("image/drapeau.png").toURI().toString();
                             Image drapeau = new Image(drapeauURI);
                             ImageView drapeauView = new ImageView(drapeau);
                             b.setGraphic(drapeauView);
-                            //b.setText("!");
                         }
                         else{
                             b.setGraphic(null);
