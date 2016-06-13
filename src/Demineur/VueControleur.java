@@ -124,20 +124,22 @@ public class VueControleur extends Application{
                                 b.setText(null);
                               }
                             else
+                            {
                                 b.setText(""+jeu.getCase(id).getValeur());
-                            b.setDisable(true);                         
+                                b.setGraphic(null);
+                                b.setDisable(true); 
+                            }
                         }
                         else if(jeu.getCase(id).isDrapeau()){
-                            /* ON PEUT PAS ENLVER LE DRAPEAU ??????
+                            // ON PEUT PAS ENLVER LE DRAPEAU ??????
                             String drapeauURI = new File("image/drapeau.png").toURI().toString();
                             Image drapeau = new Image(drapeauURI);
                             ImageView drapeauView = new ImageView(drapeau);
                             b.setGraphic(drapeauView);
-                            */
-                            b.setText("!");
+                            //b.setText("!");
                         }
                         else{
-                            b.setText(null);
+                            b.setGraphic(null);
                         }
                     }
                 });
