@@ -1,6 +1,7 @@
 package Demineur;
 
 import java.io.File;
+import static java.lang.Integer.min;
 import java.util.*;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -8,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -104,6 +106,9 @@ public class VueControleur extends Application{
         border.setTop(menu);
         menu.getMenus().setAll(difficulte);
         
+        int taille = min(min(40,580/jeu.getColonnes()),740/jeu.getLignes());
+        if (taille<25)
+            taille=25;
         Group milieu = new Group();
         GridPane plateau = new GridPane();
         for (int i =0; i<jeu.getLignes();i++){
@@ -118,7 +123,8 @@ public class VueControleur extends Application{
                 int taille =min(min(40,400/jeu.getColonnes())400/jeu.getLignes());
                 b.setPrefSize(taille,taille);
                 */
-                b.setPrefSize(40,40);
+                b.setPrefSize(taille,taille);
+                b.setMaxSize(taille, taille);
                 b.setOnMouseClicked(new EventHandler<MouseEvent>(){
                     @Override
                     public void handle(MouseEvent event){
@@ -195,8 +201,8 @@ public class VueControleur extends Application{
     });
         milieu.getChildren().add(plateau);
         //border.setCenter(milieu);
-        int width = jeu.getColonnes()*40+10;
-        int height = jeu.getLignes()*40+30;
+        int width = jeu.getColonnes()*taille+10;
+        int height = jeu.getLignes()*taille+40;
         if(width>780)
             height+=15;
         if(height>580)
