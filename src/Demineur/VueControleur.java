@@ -3,14 +3,10 @@ package Demineur;
 import java.io.File;
 import static java.lang.Integer.min;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.control.Alert.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
@@ -130,11 +126,11 @@ public class VueControleur extends Application{
         final Menu difficulte = new Menu("Niveau de difficulté");
         final MenuItem facile=new MenuItem("Facile");
         facile.setOnAction(actionEvent -> init(primaryStage));
-        final MenuItem moyen = new Menu("Moyen");
+        final MenuItem moyen = new MenuItem("Moyen");
         moyen.setOnAction(actionEvent -> init(primaryStage,15,15,40,true));
-        final MenuItem difficile = new Menu("Difficile");
+        final MenuItem difficile = new MenuItem("Difficile");
         difficile.setOnAction(actionEvent -> init(primaryStage, 20, 20, 120,true));
-        final MenuItem personnalise = new Menu("Personnalisé");
+        final MenuItem personnalise = new MenuItem("Personnalisé");
         personnalise.setOnAction(actionEvent -> border.setTop(score));
         difficulte.getItems().setAll(facile,moyen,difficile,personnalise);
         
@@ -178,8 +174,6 @@ public class VueControleur extends Application{
                 });
         
         score.getChildren().add(gridpane);
-        //border.setTop(score);
-        
         border.setTop(menu);
         menu.getMenus().setAll(difficulte,mode);
         
