@@ -5,6 +5,8 @@ import static java.lang.Integer.min;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.AnimationTimer;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -253,24 +255,7 @@ public class VueControleur extends Application{
                 plateau.add(b, j, i);
             }
         }
-        final Label temps=new Label("0");
-        
-        gridpane.add(temps,8,0);
-        Thread timer = new Thread() {
-        public void run() {
-            int secondes=0;
-            while(true){
-                try {
-                    sleep(1000);
-                } catch (InterruptedException ex) {
-                    System.out.println("Bug timer");
-                }
-                secondes++;
-                temps.setText(""+secondes);
-            }
-          }
-        };
-        timer.start();
+        // Observer fin de partie
         if (obsfin)
         {
             jeu.addObserver(new Observer(){
@@ -300,13 +285,35 @@ public class VueControleur extends Application{
                         c[2]=jeu.getMines();
                         init(primaryStage,c,true);
                     }
-            }
-            }
-        });
+                }
+            }});
         }
+        Group bas = new Group();
+        GridPane contenubas = new GridPane();
+        contenubas.add(new Label("Temps : "),0,0);
+        Label tempsaff=new Label("0");
+        contenubas.add(tempsaff,1,0);
+        Timeline timeline = new Timeline();
+        AnimationTimer timersec = new AnimationTimer() {
+            int time=1;
+            int ms=0;
+            @Override
+            public void handle(long l) {
+                ms++;
+                if(ms>=60){
+                    tempsaff.setText(""+time);
+                    time++;
+                    ms=0;
+                }
+            }
+        };
+        timeline.play();
+        timersec.start();
+        
+        bas.getChildren().add(contenubas);
         milieu.getChildren().add(plateau);
         int width = min(jeu.getColonnes()*taille+10,800);
-        int height = min(jeu.getLignes()*taille+40,600);
+        int height = min(jeu.getLignes()*taille+60,600);
         // ajout espace pour l'éventuelle scrollbar
         if(width>780)
             height+=15;
@@ -317,6 +324,7 @@ public class VueControleur extends Application{
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(milieu);
         border.setCenter(scrollPane);
+        border.setBottom(bas);
         primaryStage.setTitle("Demineur");
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(370);
