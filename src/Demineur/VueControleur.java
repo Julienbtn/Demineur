@@ -3,6 +3,8 @@ package Demineur;
 import java.io.File;
 import static java.lang.Integer.min;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.*;
@@ -12,6 +14,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import modeledemineur.GrilleModele;
 
@@ -35,16 +38,6 @@ public class VueControleur extends Application{
         Group score = new Group();
         GridPane gridpane = new GridPane();
         
-        /*
-        Label labelmine = new Label("Nombre de mines restantes : ");
-        Label nbmines = new Label("0");
-        Label labeltemps = new Label("Temps écoulé : ");
-        Label nbtemps = new Label("0");
-        gridpane.add(labelmine,0,0);
-        gridpane.add(nbmines,1,0);
-        gridpane.add(labeltemps, 2, 0);
-        gridpane.add(nbtemps,3,0);
-                */
         TextField longueur = new TextField ();
         TextField largeur = new TextField ();
         TextField mines = new TextField ();
@@ -81,23 +74,17 @@ public class VueControleur extends Application{
         score.getChildren().add(gridpane);
         border.setTop(score);
         
-        int taille = min(min(40,580/jeu.getColonnes()),740/jeu.getLignes());
-        if (taille<25)
-            taille=25;
+        int taille = 40;
         Group milieu = new Group();
         GridPane plateau = new GridPane();
+        // pour essayer d'enlever le halo bleu autour d'une case quand on clique dessus
+        milieu.setStyle("-fx-focus-color: transparent;"
+                +"-fx-faint-focus-color: transparent;");
         for (int i =0; i<jeu.getLignes();i++){
             for(int j=0; j<jeu.getColonnes(); j++){
                 final int id = i*jeu.getColonnes()+j;
                 Button b= new Button();
-                /* CASES RECTANULAIRES???????
-                b.setPrefHeight(400/jeu.getColonnes());
-                b.setPrefWidth(400/jeu.getLignes());
                 
-                Sinon ça? Mais les cases peuvent pas être miniatures => Scroll en bas
-                int taille =min(min(40,400/jeu.getColonnes())400/jeu.getLignes());
-                b.setPrefSize(taille,taille);
-                */
                 b.setPrefSize(taille,taille);
                 b.setMaxSize(taille, taille);
                 b.setOnMouseClicked(new EventHandler<MouseEvent>(){
@@ -112,45 +99,56 @@ public class VueControleur extends Application{
                 jeu.addObserver(new Observer(){
                     @Override
                     public void update(Observable o,Object arg){
-                        if(jeu.isGagne()||jeu.isPerdu())
-                            b.setDisable(true);
-
                         if(jeu.getCase(id).isVisible()){
-                            if (jeu.getCase(id).getValeur()==-1){
-                                String mineURI = new File("image/mine.jpg").toURI().toString();
-                                Image mine = new Image(mineURI);
-                                ImageView mineView = new ImageView(mine);
-                                b.setGraphic(mineView);
-                                b.setText(null);
-                              }
-                            else
+                            if (jeu.getCase(id).getValeur()>=0)
                             {
                                 b.setText(""+jeu.getCase(id).getValeur());
+                                switch(jeu.getCase(id).getValeur()){
+                                    case 1: b.setTextFill(Color.BLUE);break;
+                                    case 2: b.setTextFill(Color.GREEN);break;
+                                    case 3: b.setTextFill(Color.RED);break;
+                                    case 4: b.setTextFill(Color.BROWN);break;
+                                    case 5: b.setTextFill(Color.ORANGE);break;
+                                    case 6: b.setTextFill(Color.GRAY);break;
+                                    case 7: b.setTextFill(Color.YELLOW);break;
+                                    case 8: b.setTextFill(Color.BLACK);break;
+                                }
+                                // en gras
+                                b.setStyle("-fx-font-weight: bold;");
                                 b.setGraphic(null);
                                 b.setDisable(true); 
                             }
                         }
                         else if(jeu.getCase(id).isDrapeau()){
-                            // ON PEUT PAS ENLVER LE DRAPEAU ??????
                             String drapeauURI = new File("image/drapeau.png").toURI().toString();
-                            Image drapeau = new Image(drapeauURI);
+                            Image drapeau = new Image(drapeauURI,b.getWidth()*0.6,b.getHeight()*0.6,false,false);
                             ImageView drapeauView = new ImageView(drapeau);
                             b.setGraphic(drapeauView);
-                            //b.setText("!");
                         }
                         else{
                             b.setGraphic(null);
                         }
+                        
+                        if(jeu.isGagne()||jeu.isPerdu()){
+                            if (jeu.getCase(id).getValeur()==-1){
+                                String mineURI = new File("image/mine.jpg").toURI().toString();
+                                Image mine = new Image(mineURI,b.getWidth()*0.6,b.getHeight()*0.6,false,false);
+                                ImageView mineView = new ImageView(mine);
+                                b.setGraphic(mineView);
+                                b.setText(null);
+                              }
+                            b.setDisable(true);
+                        }
                     }
                 });
                 plateau.add(b, j, i);
-            } 
+            }
         }
         jeu.addObserver(new Observer(){
         @Override
         public void update(Observable o,Object arg){
             if(jeu.isGagne())
-            {         
+            {
                 Alert victoire = new Alert(AlertType.INFORMATION);   
                 victoire.setTitle("Victoire");
                 victoire.setHeaderText(null);
@@ -159,12 +157,11 @@ public class VueControleur extends Application{
             }
             else if (jeu.isPerdu())
             {
-                Alert défaite = new Alert(AlertType.CONFIRMATION);   
+                Alert défaite = new Alert(AlertType.CONFIRMATION);
                 défaite.setTitle("Défaite");
                 défaite.setHeaderText(null);
                 défaite.setHeaderText("Oh non, vous avez perdu ...");
                 défaite.setContentText("Voulez-vous recommencez la partie ? ");
-                //défaite.show();
                 Optional<ButtonType> result = défaite.showAndWait();
                 if (result.get() == ButtonType.OK){
                     int[] c = new int[3];
@@ -173,13 +170,31 @@ public class VueControleur extends Application{
                     c[2]=jeu.getMines();
                     init(primaryStage,c);
                 }
-        }
+            }
         }
     });
+        final Label temps=new Label("0");
+        
+        gridpane.add(temps,8,0);
+        Thread timer = new Thread() {
+        public void run() {
+            int secondes=0;
+            while(true){
+                try {
+                    sleep(1000);
+                } catch (InterruptedException ex) {
+                    System.out.println("Bug timer");
+                }
+                secondes++;
+                temps.setText(""+secondes);
+            }
+          }
+        };
+        timer.start();
         milieu.getChildren().add(plateau);
-        //border.setCenter(milieu);
-        int width = jeu.getColonnes()*taille+10;
-        int height = jeu.getLignes()*taille+40;
+        int width = min(jeu.getColonnes()*taille+10,800);
+        int height = min(jeu.getLignes()*taille+40,600);
+        // ajout espace pour l'éventuelle scrollbar
         if(width>780)
             height+=15;
         if(height>580)
@@ -189,13 +204,10 @@ public class VueControleur extends Application{
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(milieu);
         border.setCenter(scrollPane);
-        
         primaryStage.setTitle("Demineur");
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(370);
         primaryStage.setMinHeight(60);
-        primaryStage.setMaxWidth(800);
-        primaryStage.setMaxHeight(600);
         primaryStage.centerOnScreen();
         primaryStage.show();
     }
