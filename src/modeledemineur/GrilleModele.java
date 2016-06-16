@@ -7,8 +7,9 @@ public class GrilleModele extends Observable {
     private int lignes;
     private int colonnes;
     private int mines;
-    boolean premierClic;
-    int fin;
+    private boolean premierClic;
+    private int drapeaux;
+    private int fin;
     //-1 perdu, 1 gagné
     private CaseModele[] plateau;
     // plateau[colonnes * l + c]
@@ -19,6 +20,7 @@ public class GrilleModele extends Observable {
         mines=nbmines;
         premierClic=true;
         fin=0;
+        drapeaux=0;
         plateau = new CaseModele[lignes*colonnes];
         for(int i=0;i<lignes*colonnes;i++)
             plateau[i]=new CaseModele();
@@ -53,6 +55,7 @@ public class GrilleModele extends Observable {
     
     public void modifDrapeau(int id){
         plateau[id].modifDrapeau();
+        drapeaux+=plateau[id].isDrapeau()?1:-1;
         setChanged();
         notifyObservers();
     }
@@ -85,6 +88,8 @@ public class GrilleModele extends Observable {
     
     public void jouerRecu(int id){
         boolean nouv = !plateau[id].isVisible();
+        if(plateau[id].isDrapeau())
+            modifDrapeau(id);
         plateau[id].setVisible();
         if(!plateau[id].isMine()){
             if(nouv && plateau[id].getValeur()==0){
@@ -126,10 +131,16 @@ public class GrilleModele extends Observable {
     public CaseModele getCase(int id){
         return plateau[id];
     }
+    public int getDrapeaux(){
+        return drapeaux;
+    }
     public boolean isGagne(){
         return fin==1;
     }
     public boolean isPerdu(){
         return fin==-1;
+    }
+    public boolean isEnCours(){
+        return !premierClic&&fin==0;
     }
 }

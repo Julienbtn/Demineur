@@ -236,7 +236,7 @@ public class VueControleur extends Application{
                         
                         if(jeu.isGagne()||jeu.isPerdu()){
                             if (jeu.getCase(id).getValeur()==-1){
-                                String mineURI = new File("image/mine.jpg").toURI().toString();
+                                String mineURI = new File("image/mine.png").toURI().toString();
                                 Image mine = new Image(mineURI,b.getWidth()*0.6,b.getHeight()*0.6,false,false);
                                 ImageView mineView = new ImageView(mine);
                                 b.setGraphic(mineView);
@@ -256,7 +256,7 @@ public class VueControleur extends Application{
             @Override
             public void update(Observable o,Object arg){
                 if(jeu.isGagne())
-                {         
+                {
                     Alert victoire = new Alert(AlertType.INFORMATION);   
                     victoire.setTitle("Victoire");
                     victoire.setHeaderText(null);
@@ -284,17 +284,19 @@ public class VueControleur extends Application{
         }
         Group bas = new Group();
         GridPane contenubas = new GridPane();
+        
+        // Ajout du timer pour le temps
         contenubas.add(new Label("Temps : "),0,0);
         Label tempsaff=new Label("0");
         contenubas.add(tempsaff,1,0);
         Timeline timeline = new Timeline();
         AnimationTimer timersec = new AnimationTimer() {
-            int time=1;
+            int time=0;
             int ms=0;
             @Override
             public void handle(long l) {
                 ms++;
-                if(ms>=60){
+                if(ms>=60&&jeu.isEnCours()){
                     tempsaff.setText(""+time);
                     time++;
                     ms=0;
@@ -303,6 +305,18 @@ public class VueControleur extends Application{
         };
         timeline.play();
         timersec.start();
+        
+        // Ajout du compteur de mines restantes
+        contenubas.add(new Label("     Mines restantes : "),2,0);
+        final Label minesaff=new Label(""+(jeu.getMines()-jeu.getDrapeaux()));
+        contenubas.add(minesaff,3,0);
+        jeu.addObserver(new Observer(){
+            @Override
+            public void update(Observable o,Object arg){
+                minesaff.setText(""+(jeu.getMines()-jeu.getDrapeaux()));
+            }
+        });
+        
         
         bas.getChildren().add(contenubas);
         milieu.getChildren().add(plateau);
@@ -321,7 +335,7 @@ public class VueControleur extends Application{
         border.setBottom(bas);
         primaryStage.setTitle("Demineur");
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(370);
+        primaryStage.setMinWidth(250);
         primaryStage.setMinHeight(60);
         primaryStage.centerOnScreen();
         primaryStage.show();

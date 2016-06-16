@@ -1,7 +1,7 @@
 //Controleur pour l'utilisateur
 //Source : https://github.com/Crazy-Tacos/Une-histoire-de-tacos-Part1
 //Auteur : Lilian Varrel
-package modeledemineur;
+package Console;
 
 import java.util.Scanner;
 
