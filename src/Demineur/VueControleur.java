@@ -17,20 +17,26 @@ import javafx.stage.Stage;
 import modeledemineur.GrilleModele;
 
 public class VueControleur extends Application{
+    //modele du jeu 
     private GrilleModele jeu;
     
+    //méthode de lancement de la fenêtre
     @Override
     public void start(Stage primaryStage) {
         init(primaryStage);
     }
     
+    //implémentation du mode survival
     public void survival(Stage primaryStage){
+        // nivieau 1 : on lance une partie avec 10 lignes et 10 colonnes et avec 5 mines 
         init(primaryStage,10,10,5,false);
         jeu.addObserver(new Observer(){
             @Override
             public void update(Observable o,Object arg){
                 if(jeu.isGagne())
                 {
+                    //Si on gagne on continue la partie 
+                    // nivieau 2 : on lance une partie avec 15 lignes et 15 colonnes et avec 20 mines
                     init(primaryStage,15,15,20,false);
                     Alert victoire1 = new Alert(AlertType.INFORMATION);   
                     victoire1.setTitle("Victoire");
@@ -42,6 +48,9 @@ public class VueControleur extends Application{
                     public void update(Observable o,Object arg){
                         if(jeu.isGagne())
                         {
+                            //Si on gagne on continue la partie 
+                            // nivieau 3 (final : on lance une partie avec 20 lignes 
+                            //et 20 colonnes et avec 60 mines
                             init(primaryStage,20,20,60,false);
                             Alert victoire2 = new Alert(AlertType.INFORMATION);   
                             victoire2.setTitle("Victoire");
@@ -52,7 +61,8 @@ public class VueControleur extends Application{
                             @Override
                              public void update(Observable o,Object arg){
                                  if(jeu.isGagne())
-                                 { 
+                                 {
+                                     //Si on gagne : on a terminé le mode survival 
                                      Alert victoire3 = new Alert(AlertType.INFORMATION);   
                                      victoire3.setTitle("Victoire finale");
                                      victoire3.setHeaderText(null);
@@ -61,6 +71,8 @@ public class VueControleur extends Application{
                                  }
                                  else if (jeu.isPerdu())  
                                  {
+                                     //Si on perd au niveau 3, on peut choisir de recommencer du début
+                                     //le mode ou refuser et sélectionner un autre type de partie                                      
                                      Alert defaite3 = new Alert(AlertType.CONFIRMATION);   
                                      defaite3.setTitle("Défaite");
                                      defaite3.setHeaderText(null);
@@ -75,7 +87,9 @@ public class VueControleur extends Application{
                             });  
                         }
                         else if (jeu.isPerdu())         
-                        {        
+                        {
+                            //Si on perd au niveau 2, on peut choisir de recommencer du début
+                            //le mode ou refuser et sélectionner un autre type de partie
                             Alert defaite2 = new Alert(AlertType.CONFIRMATION);          
                             defaite2.setTitle("Défaite");    
                             defaite2.setHeaderText(null);
@@ -90,7 +104,9 @@ public class VueControleur extends Application{
                 });
                 }
                 else if (jeu.isPerdu())           
-                {           
+                {
+                    //Si on perd au niveau 3, on peut choisir de recommencer du début
+                    //le mode ou refuser et sélectionner un autre type de partie
                     Alert defaite1 = new Alert(AlertType.CONFIRMATION);                  
                     defaite1.setTitle("Défaite");    
                     defaite1.setHeaderText(null);    
@@ -105,27 +121,33 @@ public class VueControleur extends Application{
         });
     }
     
+    //méthode qui lance la grille initiale avec 10 lignes, 10 colonnes et 10 mines
     public void init(Stage primaryStage){
         int[] temp = new int[3];
         temp[0]=temp[1]=temp[2]=10;
         init(primaryStage,temp,true);
     }
     
+    //méhode qui lance une grille de avec des paramètres choisis et un type défini
     public void init(Stage primaryStage,int nbligne, int nbcolonne, int nbmine,boolean obsfin)
     {
         int[] temp = {nbligne, nbcolonne, nbmine};
         init(primaryStage,temp,obsfin);
     }
     
-    //code de la fenêtre 
+    //méthode initiale de création de la fenêtre qui prend en argument une scène, un tableau
+    //où sont rangées les différentes variables du plateau de jeu (lignes, colonnes et mines)
+    //et un boolean permettant de définir les observateurs en fonction du ytpe de parie choisi
     public void init(Stage primaryStage, int[] caracs,boolean obsfin){
         jeu=new GrilleModele(caracs[0], caracs[1], caracs[2]);
         BorderPane border = new BorderPane();
-        Group score = new Group();
+        Group persogroupe = new Group();
         
         //implémentation du menu de la fenêtre 
         final MenuBar menu =new MenuBar();
         
+        //implémentation du menu possédant les différents niveaux de difficultés
+        //Le niveau de difficulté dépend de la taille de la grille et du nombre de mines 
         final Menu difficulte = new Menu("Niveau de difficulté");
         final MenuItem facile=new MenuItem("Facile");
         facile.setOnAction(actionEvent -> init(primaryStage));
@@ -134,14 +156,16 @@ public class VueControleur extends Application{
         final MenuItem difficile = new MenuItem("Difficile");
         difficile.setOnAction(actionEvent -> init(primaryStage, 20, 20, 120,true));
         final MenuItem personnalise = new MenuItem("Personnalisé");
-        personnalise.setOnAction(actionEvent -> border.setTop(score));
+        personnalise.setOnAction(actionEvent -> border.setTop(persogroupe));
         difficulte.getItems().setAll(facile,moyen,difficile,personnalise);
         
+        //Implémentation du menu avec les différents modes de jeu 
         final Menu mode = new Menu("Mode de jeu");
         final MenuItem survival = new MenuItem("Survival");
         survival.setOnAction(actionEvent -> survival(primaryStage));
         mode.getItems().setAll(survival);
         
+        //Implémentation de la barre pour créer une grille de jeu personnalisée 
         GridPane personalise = new GridPane();
         TextField longueur = new TextField ();
         TextField largeur = new TextField ();
@@ -161,6 +185,7 @@ public class VueControleur extends Application{
         personalise.add(mines,5,0);
         personalise.add(new Label("  "),6,0);
         personalise.add(jouer,7,0);
+        //Création de l'observateur pour créer une partie personnalisée
         jouer.setOnMouseClicked(new EventHandler<MouseEvent>(){
                     @Override
                     public void handle(MouseEvent event){
@@ -175,8 +200,10 @@ public class VueControleur extends Application{
                             init(primaryStage,c,true);
                     }
                 });
+        //On ajoute les différents éléments dans la barre de personnalisation
+        persogroupe.getChildren().add(personalise);
         
-        score.getChildren().add(personalise);
+        //On place le menu en haut et ajout les menus difficulté et mode
         border.setTop(menu);
         menu.getMenus().setAll(difficulte,mode);
         
