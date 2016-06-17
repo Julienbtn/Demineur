@@ -14,14 +14,28 @@ public class Controleur {
     public void start() {
         do{
             GrilleModele jeu = ini();
-            int l,c;
+            int l,c,choix;
             do{
                 aff(jeu);
-                System.out.print("Quel ligne? ");
+                System.out.println("\nChoix d'une case à modifier : ");
+                System.out.print("  Quel ligne? ");
                 l=in.readChose(jeu.getLignes())-1;
-                System.out.print("Quel colonne? ");
+                System.out.print("  Quel colonne? ");
                 c=in.readChose(jeu.getColonnes())-1;
-                jeu.jouer(jeu.getColonnes() * l + c);
+                choix=jeu.getColonnes() * l + c;
+                if(!jeu.getCase(choix).isVisible()){
+                    aff(jeu,choix);
+                    System.out.println("Que faire avec la case ? ("+l+" "+c+" ?");
+                    System.out.println("  1. Jouer");
+                    System.out.println("  2. "+(jeu.getCase(choix).isDrapeau()?"Enlev":"Ajout")
+                    +"er drapeau");
+                    System.out.println("  3. Ne rien faire");
+                    switch(in.readChose(3)){
+                        case 1:jeu.jouer(choix);break;
+                        case 2:jeu.getCase(choix).modifDrapeau();break;
+                        default:break;
+                    }
+                }
             }while(!(jeu.isGagne()||jeu.isPerdu()));
             aff(jeu);
             if(jeu.isGagne())
@@ -45,8 +59,11 @@ public class Controleur {
         }while(m>=l*c);
         return new GrilleModele(l,c,m);
     }
-    
     public void aff(GrilleModele p){
+        aff(p,-1);
+    }
+    
+    public void aff(GrilleModele p, int choix){
         int l=p.getLignes();
         int c=p.getColonnes();
         CaseModele cm;
@@ -58,7 +75,9 @@ public class Controleur {
             if(i%c==0)
                 System.out.print(i/c+1+(i/c+1<10?".":""));
             cm=p.getCase(i);
-            if(cm.isVisible()){
+            if(i==choix)
+                System.out.print("?");
+            else if(cm.isVisible()){
                 if(cm.getValeur()==-1)
                     System.out.print("X");
                 else
@@ -73,6 +92,7 @@ public class Controleur {
             else
                 System.out.print("|");
         }
+        System.out.println(" Mines totales : "+p.getMines()+"   Mines restantes : "+(p.getMines()-p.getDrapeaux()));
     }
     
 }
