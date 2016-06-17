@@ -17,9 +17,9 @@ public class Controleur {
             int l,c;
             do{
                 aff(jeu);
-                System.out.print("Quel ligne?");
+                System.out.print("Quel ligne? ");
                 l=in.readChose(jeu.getLignes())-1;
-                System.out.print("Quel colonne?");
+                System.out.print("Quel colonne? ");
                 c=in.readChose(jeu.getColonnes())-1;
                 jeu.jouer(jeu.getColonnes() * l + c);
             }while(!(jeu.isGagne()||jeu.isPerdu()));
@@ -51,7 +51,7 @@ public class Controleur {
         int c=p.getColonnes();
         CaseModele cm;
         System.out.print("  ");
-        for(int i=1;i<c;i++)
+        for(int i=1;i<=c;i++)
             System.out.print(i+(i<10?".":""));
         System.out.println();
         for(int i=0;i<l*c;i++){
