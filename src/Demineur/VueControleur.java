@@ -105,7 +105,7 @@ public class VueControleur extends Application{
                 }
                 else if (jeu.isPerdu())           
                 {
-                    //Si on perd au niveau 3, on peut choisir de recommencer du début
+                    //Si on perd au niveau 1, on peut choisir de recommencer du début
                     //le mode ou refuser et sélectionner un autre type de partie
                     Alert defaite1 = new Alert(AlertType.CONFIRMATION);                  
                     defaite1.setTitle("Défaite");    
