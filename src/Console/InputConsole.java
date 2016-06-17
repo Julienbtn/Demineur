@@ -1,10 +1,8 @@
 //Controleur pour l'utilisateur
 //Source : https://github.com/Crazy-Tacos/Une-histoire-de-tacos-Part1
-//Auteur : Lilian Varrel
 package Console;
 
 import java.util.Scanner;
-
 
 public class InputConsole {
     private Scanner in;
@@ -20,6 +18,7 @@ public class InputConsole {
         while (choix < 1 || choix > max);
         return choix;
     }
+    
     public String readString(){
         String str;
         do
@@ -27,6 +26,7 @@ public class InputConsole {
         while(str.length() == 0);
         return str;
     }
+    
     public int readInteger(){
         int choix = -1;
         String str;

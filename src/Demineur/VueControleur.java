@@ -3,8 +3,7 @@ package Demineur;
 import java.io.File;
 import static java.lang.Integer.min;
 import java.util.*;
-import javafx.animation.AnimationTimer;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.*;
@@ -118,11 +117,13 @@ public class VueControleur extends Application{
         init(primaryStage,temp,obsfin);
     }
     
+    //code de la fenêtre 
     public void init(Stage primaryStage, int[] caracs,boolean obsfin){
         jeu=new GrilleModele(caracs[0], caracs[1], caracs[2]);
         BorderPane border = new BorderPane();
         Group score = new Group();
         
+        //implémentation du menu de la fenêtre 
         final MenuBar menu =new MenuBar();
         
         final Menu difficulte = new Menu("Niveau de difficulté");
@@ -141,7 +142,7 @@ public class VueControleur extends Application{
         survival.setOnAction(actionEvent -> survival(primaryStage));
         mode.getItems().setAll(survival);
         
-        GridPane gridpane = new GridPane();
+        GridPane personalise = new GridPane();
         TextField longueur = new TextField ();
         TextField largeur = new TextField ();
         TextField mines = new TextField ();
@@ -152,14 +153,14 @@ public class VueControleur extends Application{
         largeur.setText(""+caracs[1]);
         mines.setText(""+caracs[2]);
         Button jouer= new Button("Jouer");
-        gridpane.add(new Label("  Lignes :"),0,0);
-        gridpane.add(longueur,1,0);
-        gridpane.add(new Label("  Colonnes :"),2,0);
-        gridpane.add(largeur,3,0);
-        gridpane.add(new Label("  Mines :"),4,0);
-        gridpane.add(mines,5,0);
-        gridpane.add(new Label("  "),6,0);
-        gridpane.add(jouer,7,0);
+        personalise.add(new Label("  Lignes :"),0,0);
+        personalise.add(longueur,1,0);
+        personalise.add(new Label("  Colonnes :"),2,0);
+        personalise.add(largeur,3,0);
+        personalise.add(new Label("  Mines :"),4,0);
+        personalise.add(mines,5,0);
+        personalise.add(new Label("  "),6,0);
+        personalise.add(jouer,7,0);
         jouer.setOnMouseClicked(new EventHandler<MouseEvent>(){
                     @Override
                     public void handle(MouseEvent event){
@@ -175,7 +176,7 @@ public class VueControleur extends Application{
                     }
                 });
         
-        score.getChildren().add(gridpane);
+        score.getChildren().add(personalise);
         border.setTop(menu);
         menu.getMenus().setAll(difficulte,mode);
         
