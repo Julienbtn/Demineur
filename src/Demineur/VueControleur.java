@@ -207,7 +207,9 @@ public class VueControleur extends Application{
         border.setTop(menu);
         menu.getMenus().setAll(difficulte,mode);
         
+        //taille de base des cases 
         int taille = 40;
+        //définition de la partie du plateau 
         Group milieu = new Group();
         GridPane plateau = new GridPane();
         // pour essayer d'enlever le halo bleu autour d'une case quand on clique dessus
@@ -215,11 +217,14 @@ public class VueControleur extends Application{
                 +"-fx-faint-focus-color: transparent;");
         for (int i =0; i<jeu.getLignes();i++){
             for(int j=0; j<jeu.getColonnes(); j++){
+                //chaque case possède un bouton et un id unique 
                 final int id = i*jeu.getColonnes()+j;
                 Button b= new Button();
-                
                 b.setPrefSize(taille,taille);
                 b.setMaxSize(taille, taille);
+                //chaque case peut être cliquée on ajoute donc un événement
+                //si on fait un clic gauche, on joue dans cette case
+                //si on fait un clic droit, on met un drapeau sur cette case
                 b.setOnMouseClicked(new EventHandler<MouseEvent>(){
                     @Override
                     public void handle(MouseEvent event){
@@ -229,6 +234,7 @@ public class VueControleur extends Application{
                             jeu.modifDrapeau(id);
                     }
                 });
+                //on ajoute un observeur pour voir le contenu de la case
                 jeu.addObserver(new Observer(){
                     @Override
                     public void update(Observable o,Object arg){
@@ -237,6 +243,7 @@ public class VueControleur extends Application{
                             {
                                 b.setText(""+jeu.getCase(id).getValeur());
                                 switch(jeu.getCase(id).getValeur()){
+                                    //on change la couleur de l'affichage en fonction du nombre
                                     case 1: b.setTextFill(Color.BLUE);break;
                                     case 2: b.setTextFill(Color.GREEN);break;
                                     case 3: b.setTextFill(Color.RED);break;
@@ -246,12 +253,13 @@ public class VueControleur extends Application{
                                     case 7: b.setTextFill(Color.YELLOW);break;
                                     case 8: b.setTextFill(Color.BLACK);break;
                                 }
-                                // en gras
+                                //on met le texte en gras
                                 b.setStyle("-fx-font-weight: bold;");
                                 b.setGraphic(null);
                                 b.setDisable(true); 
                             }
                         }
+                        //si on pose un drapeau sur la case on met l'image du drapeau 
                         else if(jeu.getCase(id).isDrapeau()){
                             String drapeauURI = new File("image/drapeau.png").toURI().toString();
                             Image drapeau = new Image(drapeauURI,b.getWidth()*0.6,b.getHeight()*0.6,false,false);
@@ -259,10 +267,12 @@ public class VueControleur extends Application{
                             b.setGraphic(drapeauView);
                         }
                         else{
+                            //si on reclique droit dessus on enlève le drapeau
                             b.setGraphic(null);
                         }
                         
                         if(jeu.isGagne()||jeu.isPerdu()){
+                            //si la case cliquée est une mine on affiche l'image de la mine 
                             if (jeu.getCase(id).getValeur()==-1){
                                 String mineURI = new File("image/mine.png").toURI().toString();
                                 Image mine = new Image(mineURI,b.getWidth()*0.6,b.getHeight()*0.6,false,false);
@@ -270,6 +280,7 @@ public class VueControleur extends Application{
                                 b.setGraphic(mineView);
                                 b.setText(null);
                               }
+                            //dans tous les cas on désactive la case 
                             b.setDisable(true);
                         }
                     }
@@ -277,14 +288,19 @@ public class VueControleur extends Application{
                 plateau.add(b, j, i);
             }
         }
+        //On place le plateau au milieu 
+         milieu.getChildren().add(plateau);
+         
         // Observer fin de partie
         if (obsfin)
         {
+            //on observe la partie pour voir si elle est fini et son résultat 
             jeu.addObserver(new Observer(){
             @Override
             public void update(Observable o,Object arg){
                 if(jeu.isGagne())
                 {
+                    //si on a gagné on affiche une fenêtre pop up pour le signaler au joueur  
                     Alert victoire = new Alert(AlertType.INFORMATION);   
                     victoire.setTitle("Victoire");
                     victoire.setHeaderText(null);
@@ -293,12 +309,13 @@ public class VueControleur extends Application{
                 }
                 else if (jeu.isPerdu())
                 {
+                    //si on a perdu on affiche une fenêtre pop up pour le signaler au joueur
+                    //on peut recommencer la même partie en cliquant sur OK
                     Alert défaite = new Alert(AlertType.CONFIRMATION);   
                     défaite.setTitle("Défaite");
                     défaite.setHeaderText(null);
                     défaite.setHeaderText("Oh non, vous avez perdu ...");
                     défaite.setContentText("Voulez-vous recommencez la partie ? ");
-                    //défaite.show();
                     Optional<ButtonType> result = défaite.showAndWait();
                     if (result.get() == ButtonType.OK){
                         int[] c = new int[3];
@@ -310,6 +327,8 @@ public class VueControleur extends Application{
                 }
             }});
         }
+       
+        //conteneur des composants affichés en bas de fenêtre
         Group bas = new Group();
         GridPane contenubas = new GridPane();
         
@@ -345,9 +364,10 @@ public class VueControleur extends Application{
             }
         });
         
-        
+        //ajout dans les containeurs des composants
         bas.getChildren().add(contenubas);
-        milieu.getChildren().add(plateau);
+        
+        
         int width = min(jeu.getColonnes()*taille+10,800);
         int height = min(jeu.getLignes()*taille+60,600);
         // ajout espace pour l'éventuelle scrollbar
