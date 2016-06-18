@@ -3,6 +3,8 @@ package Demineur;
 import java.io.File;
 import static java.lang.Integer.min;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -121,24 +123,32 @@ public class VueControleur extends Application{
         });
     }
     
+    public void modeTempsLimite(Stage primaryStage){
+        int[] temp = new int[3];
+        temp[0]=15;
+        temp[1]=15;
+        temp[2]=40;
+        init(primaryStage,temp,true,18);
+    }
+    
     //méthode qui lance la grille initiale avec 10 lignes, 10 colonnes et 10 mines
     public void init(Stage primaryStage){
         int[] temp = new int[3];
         temp[0]=temp[1]=temp[2]=10;
-        init(primaryStage,temp,true);
+        init(primaryStage,temp,true,-1);
     }
     
     //méhode qui lance une grille de avec des paramètres choisis et un type défini
     public void init(Stage primaryStage,int nbligne, int nbcolonne, int nbmine,boolean obsfin)
     {
         int[] temp = {nbligne, nbcolonne, nbmine};
-        init(primaryStage,temp,obsfin);
+        init(primaryStage,temp,obsfin,-1);
     }
     
     //méthode initiale de création de la fenêtre qui prend en argument une scène, un tableau
     //où sont rangées les différentes variables du plateau de jeu (lignes, colonnes et mines)
     //et un boolean permettant de définir les observateurs en fonction du ytpe de parie choisi
-    public void init(Stage primaryStage, int[] caracs,boolean obsfin){
+    public void init(Stage primaryStage, int[] caracs, boolean obsfin, int tempsMax){
         jeu=new GrilleModele(caracs[0], caracs[1], caracs[2]);
         BorderPane border = new BorderPane();
         Group persogroupe = new Group();
@@ -163,7 +173,9 @@ public class VueControleur extends Application{
         final Menu mode = new Menu("Mode de jeu");
         final MenuItem survival = new MenuItem("Survival");
         survival.setOnAction(actionEvent -> survival(primaryStage));
-        mode.getItems().setAll(survival);
+        final MenuItem tempsLimite = new MenuItem("Temps limité");
+        tempsLimite.setOnAction(actionEvent -> modeTempsLimite(primaryStage));
+        mode.getItems().setAll(survival,tempsLimite);
         
         //Implémentation de la barre pour créer une grille de jeu personnalisée 
         GridPane personalise = new GridPane();
@@ -197,7 +209,7 @@ public class VueControleur extends Application{
                         if(mines.getText().matches("[0-9]*"))
                             c[2]=Integer.parseInt(mines.getText());
                         if(c[0]>0&&c[1]>0&&c[2]>0&&c[0]*c[1]>c[2])
-                            init(primaryStage,c,true);
+                            init(primaryStage,c,true,-1);
                     }
                 });
         //On ajoute les différents éléments dans la barre de personnalisation
@@ -296,36 +308,54 @@ public class VueControleur extends Application{
         {
             //on observe la partie pour voir si elle est fini et son résultat 
             jeu.addObserver(new Observer(){
-            @Override
-            public void update(Observable o,Object arg){
-                if(jeu.isGagne())
-                {
-                    //si on a gagné on affiche une fenêtre pop up pour le signaler au joueur  
-                    Alert victoire = new Alert(AlertType.INFORMATION);   
-                    victoire.setTitle("Victoire");
-                    victoire.setHeaderText(null);
-                    victoire.setContentText("Felicitation vous avez gagné !!!");
-                    victoire.show();
-                }
-                else if (jeu.isPerdu())
-                {
-                    //si on a perdu on affiche une fenêtre pop up pour le signaler au joueur
-                    //on peut recommencer la même partie en cliquant sur OK
-                    Alert défaite = new Alert(AlertType.CONFIRMATION);   
-                    défaite.setTitle("Défaite");
-                    défaite.setHeaderText(null);
-                    défaite.setHeaderText("Oh non, vous avez perdu ...");
-                    défaite.setContentText("Voulez-vous recommencez la partie ? ");
-                    Optional<ButtonType> result = défaite.showAndWait();
-                    if (result.get() == ButtonType.OK){
-                        int[] c = new int[3];
-                        c[0]=jeu.getLignes();
-                        c[1]=jeu.getColonnes();
-                        c[2]=jeu.getMines();
-                        init(primaryStage,c,true);
+                boolean fenetreDejaAff = false;
+                @Override
+                public void update(Observable o,Object arg){
+                    if(!fenetreDejaAff){
+                        if(jeu.isGagne())
+                        {
+                            fenetreDejaAff=true;
+                            //si on a gagné on affiche une fenêtre pop up pour le signaler au joueur  
+                            Alert victoire = new Alert(AlertType.INFORMATION);   
+                            victoire.setTitle("Victoire");
+                            victoire.setHeaderText(null);
+                            victoire.setContentText("Felicitation vous avez gagné !!!");
+                            victoire.show();
+                        }
+                        else if (jeu.isPerdu()&&tempsMax<=0)
+                        {
+                            fenetreDejaAff=true;
+                            //si on a perdu on affiche une fenêtre pop up pour le signaler au joueur
+                            //on peut recommencer la même partie en cliquant sur OK
+                            Alert defaite = new Alert(AlertType.CONFIRMATION);   
+                            defaite.setTitle("Défaite");
+                            defaite.setHeaderText(null);
+                            defaite.setHeaderText("Oh non, vous avez perdu ...");
+                            defaite.setContentText("Voulez-vous recommencez la partie ? ");
+                            Optional<ButtonType> result = defaite.showAndWait();
+                            if (result.get() == ButtonType.OK){
+                                int[] c = new int[3];
+                                c[0]=jeu.getLignes();
+                                c[1]=jeu.getColonnes();
+                                c[2]=jeu.getMines();
+                                init(primaryStage,c,obsfin,tempsMax);
+                            }
+                        }
+                        else if(jeu.isPerdu()){
+                            fenetreDejaAff=true;
+                            //si on perd EN MODE TEMPS LIMITE
+                            // On ne peut pas mettre la fenetre classique car la fonction
+                            // showandwait ne peut pas etre appelée depuis un timer
+                            Alert defaite = new Alert(AlertType.INFORMATION);   
+                            defaite.setTitle("Defaite");
+                            defaite.setHeaderText(null);
+                            defaite.setContentText("Oh non, vous avez perdu ...");
+                            defaite.show();
+                        }
                     }
+                    
                 }
-            }});
+            });
         }
        
         //conteneur des composants affichés en bas de fenêtre
@@ -333,25 +363,56 @@ public class VueControleur extends Application{
         GridPane contenubas = new GridPane();
         
         // Ajout du timer pour le temps
-        contenubas.add(new Label("Temps : "),0,0);
-        Label tempsaff=new Label("0");
-        contenubas.add(tempsaff,1,0);
-        Timeline timeline = new Timeline();
-        AnimationTimer timersec = new AnimationTimer() {
-            int time=0;
-            int ms=0;
-            @Override
-            public void handle(long l) {
-                ms++;
-                if(ms>=60&&jeu.isEnCours()){
-                    tempsaff.setText(""+time);
-                    time++;
-                    ms=0;
+        if(tempsMax<=0){
+            contenubas.add(new Label("Temps : "),0,0);
+            Label tempsaff=new Label("0");
+            contenubas.add(tempsaff,1,0);
+            Timeline timeline = new Timeline();
+            AnimationTimer timersec = new AnimationTimer() {
+                int time=0;
+                int ms=0;
+                @Override
+                public void handle(long l) {
+                    ms++;
+                    if(ms>=60&&jeu.isEnCours()){
+                        tempsaff.setText(""+time);
+                        time++;
+                        ms=0;
+                    }
+                    if(jeu.isPerdu())
+                        this.stop();
                 }
-            }
-        };
-        timeline.play();
-        timersec.start();
+            };
+            timeline.play();
+            timersec.start();
+        }
+        else{
+            contenubas.add(new Label("Temps restant : "),0,0);
+            Label tempsaff=new Label(""+tempsMax);
+            contenubas.add(tempsaff,1,0);
+            Timeline timeline = new Timeline();
+            AnimationTimer timersec = new AnimationTimer() {
+                int time=tempsMax;
+                int ms=0;
+                @Override
+                public void handle(long l) {
+                    ms++;
+                    if(time<0){
+                        jeu.setPerdu();
+                        this.stop();
+                    }
+                    else if(jeu.isPerdu())
+                        this.stop();
+                    else if(ms>=60&&jeu.isEnCours()){
+                        time--;
+                        tempsaff.setText(""+time);
+                        ms=0;
+                    }
+                }
+            };
+            timeline.play();
+            timersec.start();
+        }
         
         // Ajout du compteur de mines restantes
         contenubas.add(new Label("     Mines restantes : "),2,0);

@@ -119,6 +119,12 @@ public class GrilleModele extends Observable {
         }
     }
     
+    public void setPerdu(){
+        fin=-1;
+        setChanged();
+        notifyObservers();
+    }
+    
     public int getMines(){
         return mines;
     }
