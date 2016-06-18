@@ -128,7 +128,7 @@ public class VueControleur extends Application{
         temp[0]=15;
         temp[1]=15;
         temp[2]=40;
-        init(primaryStage,temp,true,18);
+        init(primaryStage,temp,true,180);
     }
     
     //méthode qui lance la grille initiale avec 10 lignes, 10 colonnes et 10 mines
